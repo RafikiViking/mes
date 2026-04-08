@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>La Crónica de Nuestro Destino</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Alice&family=Great+Vibes&display=swap');
+
+        :root {
+            --verde-profundo: #041a11;
+            --verde-esmeralda: #0d3d28;
+            --oro-místico: #d4af37;
+            --pergamino-antiguo: #f4e4bc;
+            --cuero-libro: #2d1b0d;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle at center, var(--verde-esmeralda) 0%, var(--verde-profundo) 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Alice', serif;
+            overflow-x: hidden;
+        }
+
+        /* --- PANTALLA DE INICIO PARA ACTIVAR MÚSICA --- */
+        #bloqueo-inicio {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--verde-profundo);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: opacity 1s ease, visibility 1s;
+        }
+
+        .sello-magico {
+            width: 100px;
+            height: 100px;
+            border: 2px solid var(--oro-místico);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            color: var(--oro-místico);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            animation: latido 2s infinite ease-in-out;
+            margin-bottom: 20px;
+        }
+
+        @keyframes latido {
+            0% { transform: scale(1); box-shadow: 0 0 10px var(--oro-místico); }
+            50% { transform: scale(1.1); box-shadow: 0 0 30px var(--oro-místico); }
+            100% { transform: scale(1); box-shadow: 0 0 10px var(--oro-místico); }
+        }
+
+        .texto-activar {
+            color: var(--oro-místico);
+            font-family: 'Cinzel', serif;
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* --- RESTO DEL DISEÑO --- */
+        .stars {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(rgba(212, 175, 55, 0.4) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.2;
+            z-index: 0;
+        }
+
+        .main-wrapper {
+            position: relative;
+            z-index: 2;
+            width: 92%;
+            max-width: 850px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .book-frame {
+            position: relative;
+            width: 100%;
+            background: var(--cuero-libro);
+            padding: clamp(8px, 2vw, 15px);
+            border-radius: 8px;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.9);
+            border: 2px solid var(--oro-místico);
+            display: flex;
+            min-height: clamp(400px, 65vh, 550px);
+        }
+
+        .page-content {
+            flex: 1;
+            background: var(--pergamino-antiguo);
+            padding: clamp(20px, 5vw, 45px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.15);
+            position: relative;
+        }
+
+        @media (max-width: 650px) {
+            .page-left { display: none; }
+            .book-frame::after { display: none; }
+        }
+
+        .book-frame::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 5%;
+            bottom: 5%;
+            width: 1px;
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.3), transparent);
+            z-index: 5;
+        }
+
+        .page-flip-overlay {
+            position: absolute;
+            right: clamp(8px, 2vw, 15px);
+            top: clamp(8px, 2vw, 15px);
+            width: calc(50% - clamp(8px, 2vw, 15px));
+            height: calc(100% - clamp(16px, 4vw, 30px));
+            background: var(--pergamino-antiguo);
+            z-index: 10;
+            transform-origin: left;
+            transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
+            backface-visibility: hidden;
+            display: none;
+            box-shadow: inset 15px 0 25px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 650px) {
+            .page-flip-overlay { width: calc(100% - 16px); left: 8px; }
+        }
+
+        .page-flip-overlay.active { display: block; animation: pageTurn 0.8s forwards; }
+
+        @keyframes pageTurn {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(-180deg); }
+        }
+
+        h2 { font-family: 'Cinzel', serif; font-size: clamp(1.1rem, 4.5vw, 1.6rem); color: #3e2723; margin-bottom: 18px; border-bottom: 1px solid var(--oro-místico); padding-bottom: 8px; width: 100%; }
+        p { font-size: clamp(1rem, 3.8vw, 1.3rem); line-height: 1.7; color: #2c1e1a; margin: 0; font-style: italic; }
+
+        .ui-footer { margin-top: 35px; width: 100%; text-align: center; }
+        .destiny-text { font-family: 'Cinzel', serif; color: var(--oro-místico); font-size: 0.85rem; letter-spacing: 3px; margin-bottom: 20px; text-transform: uppercase; }
+        
+        .buttons-grid { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+
+        .btn-fantasy {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--oro-místico);
+            color: var(--oro-místico);
+            padding: 14px 30px;
+            font-family: 'Cinzel', serif;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            font-size: 0.9rem;
+            min-width: 160px;
+            letter-spacing: 1px;
+        }
+
+        .btn-fantasy:hover { background: var(--oro-místico); color: var(--verde-profundo); box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
+
+        .epic-final { animation: appear 2s ease-out; width: 100%; }
+        .celebration-title { font-family: 'Great Vibes', cursive; font-size: clamp(2.8rem, 10vw, 4.5rem); color: #8b0000; margin: 15px 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .sub-message { font-family: 'Cinzel', serif; color: var(--oro-místico); font-size: clamp(1.2rem, 5vw, 1.8rem); margin-top: 5px; letter-spacing: 2px; }
+        
+        .magic-reveal-box {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px double var(--oro-místico);
+            padding: 20px;
+            margin-top: 25px;
+            color: #4e342e;
+            font-weight: bold;
+        }
+
+        @keyframes appear { from { opacity: 0; filter: blur(5px); } to { opacity: 1; filter: blur(0); } }
+    </style>
+</head>
+<body>
+
+    <!-- Pantalla de inicio para permitir el sonido -->
+    <div id="bloqueo-inicio" onclick="comenzarGesta()">
+        <div class="sello-magico">⚜️</div>
+        <p class="texto-activar">TOCA PARA ROMPER EL SELLO<br><span style="font-size: 0.6rem;">(Y ACTIVAR LA MELODÍA)</span></p>
+    </div>
+
+    <!-- Audio de fondo (He puesto una pista de fantasía celta de ejemplo) -->
+    <audio id="musica" loop>
+        <source src="audio.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="stars"></div>
+
+    <div class="main-wrapper">
+        <div class="book-frame">
+            <div class="page-content page-left">
+                <div style="font-size: 3.5rem; filter: drop-shadow(0 0 10px rgba(212,175,55,0.3));">🛡️</div>
+                <h2 style="border: none;">Crónicas del Amanecer</h2>
+                <p>"En los pergaminos de las estrellas, nuestros nombres fueron grabados con fuego y seda mucho antes del primer suspiro."</p>
+                <div style="margin-top: 30px; color: var(--oro-místico); font-size: 1.5rem;">✦ ✧ ✦</div>
+            </div>
+
+            <div class="page-content" id="story-holder">
+                <div id="narrative">
+                    <h2 id="title">El Umbral de la Gesta</h2>
+                    <p id="main-text">Mi reina, ante ti se abre un grimorio cuyas páginas no obedecen al tiempo, sino al latido de tu corazón. Eres el sol que disipa las brumas de mi reino.</p>
+                </div>
+            </div>
+
+            <div class="page-flip-overlay" id="flip-sheet"></div>
+        </div>
+
+        <div class="ui-footer">
+            <p class="destiny-text" id="status-label">Forja tu sendero</p>
+            <div class="buttons-grid" id="actions-panel">
+                <button class="btn-fantasy" onclick="advance(0)">✨ Senda Mística</button>
+                <button class="btn-fantasy" onclick="advance(1)">🐉 Vuelo del Fénix</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const audio = document.getElementById('musica');
+
+        function comenzarGesta() {
+            // Reproducir música
+            audio.play();
+            // Desvanecer pantalla de bloqueo
+            const bloqueo = document.getElementById('bloqueo-inicio');
+            bloqueo.style.opacity = '0';
+            setTimeout(() => {
+                bloqueo.style.visibility = 'hidden';
+            }, 1000);
+        }
+
+        const chronicle = {
+            1: {
+                title: "El Bosque de los Susurros",
+                text: "Te adentras donde las flores cantan poemas olvidados. Un guardián de luz te ofrece una copa de rocío estelar y un heraldo de sombras te invita a descubrir el secreto de la luna. ¿Qué camino eliges?",
+                options: ["Beber del Rocío", "Seguir a la Luna"],
+                next: [2, 3]
+            },
+            2: {
+                title: "El Cáliz de la Eternidad",
+                text: "Al beber, tus ojos ven el hilo dorado que une nuestras almas a través de los siglos. El guardián pregunta: ¿Deseas sellar este vínculo con la esencia de la primavera?",
+                options: ["Sellar el Pacto", "Florecer Juntos"],
+                next: ["f1", "f2"]
+            },
+            3: {
+                title: "El Reflejo del Mañana",
+                text: "La luna revela que nuestro amor es el hechizo que mantiene el mundo en equilibrio. Para que la profecía se cumpla, debes invocar la belleza tangible de este sentimiento.",
+                options: ["Invocación Real", "Crear la Realidad"],
+                next: ["f3", "f4"]
+            },
+            "f1": { msg: "El pacto ha sido escuchado por los dioses. La primavera no esperará a mañana; ha decidido brotar entre mis manos para adorarte ahora mismo..." },
+            "f2": { msg: "Nuestro florecer ha rasgado el velo entre la fantasía y la realidad. Los pétalos de este cuento han cobrado vida frente a tus ojos..." },
+            "f3": { msg: "La invocación ha sido exitosa. La gema del destino se ha transformado en fragancia y colores que solo una reina como tú puede poseer..." },
+            "f4": { msg: "La realidad se rinde ante nosotros. El hechizo final ha transportado la esencia de este bosque místico directamente a tu regazo..." }
+        };
+
+        let step = 1;
+
+        function advance(choice) {
+            const sheet = document.getElementById('flip-sheet');
+            sheet.classList.add('active');
+
+            setTimeout(() => {
+                step = chronicle[step].next[choice];
+                draw();
+            }, 400);
+
+            setTimeout(() => {
+                sheet.classList.remove('active');
+            }, 800);
+        }
+
+        function draw() {
+            const data = chronicle[step];
+            const narrative = document.getElementById('narrative');
+            const panel = document.getElementById('actions-panel');
+            const status = document.getElementById('status-label');
+
+            if (data.msg) {
+                narrative.innerHTML = `
+                    <div class="epic-final">
+                        <h2>Hechizo Completado</h2>
+                        <p style="font-size: 1.1rem; color: #3e2723;">${data.msg}</p>
+                        <div class="celebration-title">¡Feliz Cumple Mes!</div>
+                        <div class="sub-message">¡Feliz día, mi Reina!</div>
+                        <div class="magic-reveal-box">
+                            ✨ ALZA LA VISTA ✨<br>
+                            <span style="font-size: 0.9rem; font-family: 'Alice'; font-weight: normal;">La magia se ha materializado frente a ti.</span>
+                        </div>
+                    </div>
+                `;
+                panel.innerHTML = "";
+                status.innerText = "❤️ Por siempre y para siempre ❤️";
+            } else {
+                document.getElementById('title').innerText = data.title;
+                document.getElementById('main-text').innerText = data.text;
+                panel.children[0].innerText = "✨ " + data.options[0];
+                panel.children[1].innerText = "🐉 " + data.options[1];
+            }
+        }
+    </script>
+</body>
+</html>
